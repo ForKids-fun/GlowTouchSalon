@@ -4,20 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Glow Touch Salon</title>
-  <style>
-    body { font-family: sans-serif; margin:0; padding:0; background:#fff; color:#333; }
-    .hero { text-align:center; padding:2rem; background:#ffe4e1; }
-    .hero h1 { margin:0 0 0.5rem; }
-    .hero p { margin:0 0 1rem; }
-    .hero-buttons a { margin:0 0.5rem; text-decoration:none; background:#ffb6c1; color:#fff; padding:0.5rem 1rem; border-radius:8px; display:inline-block; margin-bottom:0.5rem; }
-    section { padding:2rem; }
-    .video-grid, .grid { display:flex; flex-wrap:wrap; gap:1rem; justify-content:center; }
-    .video, .card { border:1px solid #ddd; padding:1rem; border-radius:8px; max-width:320px; text-align:center; }
-    .card h3 { margin-top:0; }
-    button { padding:0.5rem 1rem; background:#ff69b4; color:#fff; border:none; border-radius:8px; cursor:pointer; }
-    button:hover { background:#ff1493; }
-    footer { text-align:center; padding:1rem; background:#ffe4e1; margin-top:2rem; }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -26,10 +13,10 @@
     <h1>Glow Touch Salon ✨</h1>
     <p>Your personal spa experience at home</p>
     <div class="hero-buttons">
-      <a href="#videos">Watch Videos 💆‍♀️</a>
-      <a href="#services">See Services 💖</a>
-      <a href="#booking">Book a Glow 🌸</a>
-      <a href="#products">Our Products 🛍️</a>
+      <a href="#videos" class="btn">Watch Videos 💆‍♀️</a>
+      <a href="#services" class="btn">See Services 💖</a>
+      <a href="#booking" class="btn">Book a Glow 🌸</a>
+      <a href="#products" class="btn">Our Products 🛍️</a>
     </div>
   </header>
 
@@ -64,12 +51,12 @@
     <div class="grid">
       <div class="card">
         <h3>Hair Care Treatment 💇‍♀️</h3>
-        <p>Hair wash, conditioning, blow dry, and light hair cream finish.</p>
+        <p>Hair wash, conditioning treatment, blow dry, and light hair cream finish.</p>
         <p>Price: 1000¥</p>
       </div>
       <div class="card">
         <h3>Skincare Service 💆‍♀️</h3>
-        <p>Cleanse, toner, serum, aloe, moisturizer, sunscreen, and primer. Includes hand & arm massage.</p>
+        <p>Cleanse, toner, serum, aloe, moisturizer, sunscreen, and primer. Includes relaxing hand & arm massage during setting time.</p>
         <p>Price: 650¥</p>
       </div>
       <div class="card">
@@ -89,7 +76,7 @@
       </div>
       <div class="card">
         <h3>Nail Painting 💅</h3>
-        <p>Cuticles pushed back, nails prepared and painted with one coat.</p>
+        <p>Cuticles pushed back, nails prepared and painted with one even coat.</p>
         <p>Price: 300¥</p>
       </div>
       <div class="card">
@@ -166,13 +153,11 @@
   <!-- Booking Form JS -->
   <script>
     const form = document.getElementById('bookingForm');
-
-    form.addEventListener('submit', function() {
-      // Alert user
+    form.addEventListener('submit', function () {
       alert('Thank you! Your Glow Touch booking has been received 🌸');
-
-      // Reset fields after submission (small delay to let FormSubmit work)
-      setTimeout(() => form.reset(), 100);
+      setTimeout(() => {
+        form.reset();
+      }, 100);
     });
   </script>
 
