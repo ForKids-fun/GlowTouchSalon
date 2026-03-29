@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glow Touch Salon</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <h1>Glow Touch Salon ✨</h1>
+    <p>Your personal spa experience at home</p>
+    <div class="hero-buttons">
+      <a href="#videos" class="btn">Watch Videos 💆‍♀️</a>
+      <a href="#services" class="btn">See Services 💖</a>
+      <a href="#booking" class="btn">Book a Glow 🌸</a>
+      <a href="#products" class="btn">Our Products 🛍️</a>
+    </div>
+  </header>
+
+  <!-- Facial Videos Section -->
+  <section id="videos">
+    <h2>Facial Videos 💆‍♀️</h2>
+    <div class="video-grid">
+      <div class="video">
+        <video controls width="320">
+          <source src="videos/video1.mp4" type="video/mp4">
+        </video>
+        <p>Hydrating Skincare 💧</p>
+      </div>
+      <div class="video">
+        <video controls width="320">
+          <source src="videos/video2.mp4" type="video/mp4">
+        </video>
+        <p>Soft Glam Makeup ✨</p>
+      </div>
+      <div class="video">
+        <video controls width="320">
+          <source src="videos/video3.mp4" type="video/mp4">
+        </video>
+        <p>Glow Touch Premium Facial 🌸</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section id="services">
+    <h2>Our Services 💖</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Hair Care Treatment 💇‍♀️</h3>
+        <p>Hair wash, conditioning treatment, blow dry, and light hair cream finish.</p>
+        <p>Price: 1000¥</p>
+      </div>
+      <div class="card">
+        <h3>Skincare Service 💆‍♀️</h3>
+        <p>Cleanse, toner, serum, aloe, moisturizer, sunscreen, and primer. Includes relaxing hand & arm massage during setting time.</p>
+        <p>Price: 650¥</p>
+      </div>
+      <div class="card">
+        <h3>Makeup 💄</h3>
+        <p>Choice of Natural, Soft Glam, or Glam makeup look.</p>
+        <p>Price: 750¥</p>
+      </div>
+      <div class="card">
+        <h3>Manicure / Pedicure 💅</h3>
+        <p>Hands or feet cleaned, nails trimmed and shaped, warm towel nail care.</p>
+        <p>Price: 500¥</p>
+      </div>
+      <div class="card">
+        <h3>Shoulder & Arm Massage 💆‍♀️</h3>
+        <p>Gentle relaxing massage using light pressure.</p>
+        <p>Price: 300¥</p>
+      </div>
+      <div class="card">
+        <h3>Nail Painting 💅</h3>
+        <p>Cuticles pushed back, nails prepared and painted with one even coat.</p>
+        <p>Price: 300¥</p>
+      </div>
+      <div class="card">
+        <h3>Hairstyling 💇‍♀️</h3>
+        <p>High ponytail, low ponytail, or bun styling.</p>
+        <p>Price: 150¥</p>
+      </div>
+      <div class="card premium">
+        <h3>Glow Touch Premium 🌸</h3>
+        <p>Full Glow Touch experience including every service.</p>
+        <p>Price: 2500¥</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Booking Section -->
+  <section id="booking">
+    <h2>Book Your Glow 🌸</h2>
+    <form action="https://formsubmit.co/el/garexu" method="POST">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_subject" value="New Glow Touch Booking! 🌸">
+
+      <label>Name:</label>
+      <input type="text" name="name" required>
+
+      <label>Email:</label>
+      <input type="email" name="email" required>
+
+      <label>Service:</label>
+      <select name="service" required>
+        <option value="">Select Service</option>
+        <option value="Hair Care Treatment">Hair Care Treatment 💇‍♀️</option>
+        <option value="Skincare Service">Skincare Service 💆‍♀️</option>
+        <option value="Makeup">Makeup 💄</option>
+        <option value="Manicure / Pedicure">Manicure / Pedicure 💅</option>
+        <option value="Shoulder & Arm Massage">Shoulder & Arm Massage 💆‍♀️</option>
+        <option value="Nail Painting">Nail Painting 💅</option>
+        <option value="Hairstyling">Hairstyling 💇‍♀️</option>
+        <option value="Glow Touch Premium">Glow Touch Premium 🌸</option>
+      </select>
+
+      <label>Date & Time:</label>
+      <input type="datetime-local" name="datetime" required>
+
+      <label>Notes (optional):</label>
+      <textarea name="notes" placeholder="Any special requests?"></textarea>
+
+      <button type="submit">Reserve Your Glow 🌟</button>
+    </form>
+  </section>
+
+  <!-- Products Section -->
+  <section id="products">
+    <h2>Our Products 🛍️</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Hydrating Glow Serum</h3>
+        <p>Brightens & hydrates your skin ✨</p>
+        <p>Price: 350¥</p>
+      </div>
+      <div class="card">
+        <h3>Panda Perfume 🐼</h3>
+        <p>Super cute & refreshing</p>
+        <p>Price: 500¥</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2026 Glow Touch Salon by Thamira 🌸</p>
+  </footer>
+
+</body>
+</html>
