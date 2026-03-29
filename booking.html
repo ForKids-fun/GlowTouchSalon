@@ -69,6 +69,17 @@ button{
   margin: 8px 0;
 }
 
+.agreement {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.agreement input {
+  margin-right: 8px;
+  transform: scale(1.2);
+}
+  
 .thankyou {
   text-align: center;
   margin-top: 20px;
@@ -138,6 +149,13 @@ button{
 
 <textarea name="notes" placeholder="Tell us your vibe, preferences, soft music, environment etc 💖"></textarea>
 
+<div class="agreement">
+  <label>
+    <input type="checkbox" id="agreeRules" required>
+    I have read and agree to the Glow Touch Booking Rules 💖
+  </label>
+</div>
+  
 <button type="submit">Book Appointment 💌</button>
 </form>
 </div>
@@ -178,6 +196,17 @@ this.reset();
 availability.innerHTML="";
 timeSlot.value="";
 });
+});
+
+  const form = document.getElementById("bookingForm");
+
+form.addEventListener("submit", function(e) {
+  const agree = document.getElementById("agreeRules");
+
+  if (!agree.checked) {
+    alert("Please agree to the booking rules before booking 💖");
+    e.preventDefault();
+  }
 });
 </script>
 
