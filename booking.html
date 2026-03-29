@@ -160,11 +160,11 @@ button{
 </form>
 </div>
 
+<script>
 const form = document.getElementById("bookingForm");
 
 form.addEventListener("submit", function(e) {
 
-  // get all fields
   const name = document.getElementById("name");
   const email = document.getElementById("email");
   const date = document.getElementById("date");
@@ -208,9 +208,9 @@ form.addEventListener("submit", function(e) {
     return;
   }
 
-  // success message (form will still send to EmailJS)
   alert("Booking sent! I will check availability soon 🌸");
 });
+</script>
 
 </body>
 </html>
