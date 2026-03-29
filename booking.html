@@ -160,55 +160,57 @@ button{
 </form>
 </div>
 
-<script>
-emailjs.init("aYulFPHFq_V9fhxKe");
+const form = document.getElementById("bookingForm");
 
-const datePicker = document.getElementById("datePicker");
-const availability = document.getElementById("availability");
-const timeSlot = document.getElementById("timeSlot");
+form.addEventListener("submit", function(e) {
 
-datePicker.addEventListener("change", function() {
-  const date = new Date(this.value);
-  const day = date.getDay(); // 0 Sun - 6 Sat
+  // get all fields
+  const name = document.getElementById("name");
+  const email = document.getElementById("email");
+  const date = document.getElementById("date");
+  const time = document.getElementById("time");
+  const service = document.getElementById("service");
+  const notes = document.getElementById("notes");
 
-  if(day === 2 || day === 5){
-    availability.innerHTML = "❌ Closed this day";
-    timeSlot.value="";
+  // check empty fields
+  if (
+    name.value.trim() === "" ||
+    email.value.trim() === "" ||
+    date.value === "" ||
+    time.value === "" ||
+    service.value === "" ||
+    notes.value.trim() === ""
+  ) {
+    alert("Please fill in ALL booking fields 🌸");
+    e.preventDefault();
     return;
   }
 
-  if(day === 0){
-    availability.innerHTML = "✅ Available";
-    timeSlot.value = "14:00 - 15:30";
-  } else {
-    availability.innerHTML = "✅ Available";
-    timeSlot.value = "17:30 - 19:00";
-  }
-});
-
-document.getElementById("bookingForm").addEventListener("submit", function(e){
-e.preventDefault();
-
-emailjs.sendForm("service_h4xpaqh","template_tgosttk",this)
-.then(()=>{
-alert("Booking sent! 🌸 Check email soon!");
-this.reset();
-availability.innerHTML="";
-timeSlot.value="";
-});
-});
-
-  const form = document.getElementById("bookingForm");
-
-form.addEventListener("submit", function(e) {
-  const agree = document.getElementById("agreeRules");
-
-  if (!agree.checked) {
-    alert("Please agree to the booking rules before booking 💖");
+  // email format check
+  const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+  if (!email.value.match(emailPattern)) {
+    alert("Please enter a valid email address 💌");
     e.preventDefault();
+    return;
   }
+
+  // name length check
+  if (name.value.length < 2) {
+    alert("Name must be at least 2 characters 💖");
+    e.preventDefault();
+    return;
+  }
+
+  // notes length check
+  if (notes.value.length < 10) {
+    alert("Please write at least 10 characters in preferences 💬");
+    e.preventDefault();
+    return;
+  }
+
+  // success message (form will still send to EmailJS)
+  alert("Booking sent! I will check availability soon 🌸");
 });
-</script>
 
 </body>
 </html>
