@@ -150,14 +150,25 @@
     <p>© 2026 Glow Touch Salon by Thamira 🌸</p>
   </footer>
 
-  <!-- Booking Form JS -->
+  <!-- JS for booking form -->
   <script>
     const form = document.getElementById('bookingForm');
-    form.addEventListener('submit', function () {
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault(); // stops page redirect
       alert('Thank you! Your Glow Touch booking has been received 🌸');
-      setTimeout(() => {
+
+      // send to FormSubmit
+      const formData = new FormData(form);
+      fetch(form.action, {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => {
+        console.log('Booking sent!', response);
         form.reset();
-      }, 100);
+      })
+      .catch(error => console.error('Error sending booking:', error));
     });
   </script>
 
