@@ -42,12 +42,76 @@ button{
   font-weight:bold;
   margin:10px;
 }
+  .rules {
+  background: #fff0f5;
+  padding: 30px;
+  border-radius: 20px;
+  max-width: 700px;
+  margin: 40px auto;
+  font-family: Arial, sans-serif;
+}
+
+.rules h2 {
+  text-align: center;
+  color: #ff69b4;
+}
+
+.rules h3 {
+  margin-top: 25px;
+  color: #ff69b4;
+}
+
+.rules ul {
+  padding-left: 20px;
+}
+
+.rules li {
+  margin: 8px 0;
+}
+
+.thankyou {
+  text-align: center;
+  margin-top: 20px;
+  font-weight: bold;
+  color: #ff69b4;
+}
 </style>
 </head>
 
 <body>
 <div class="container">
 <h1>🌸 Glow Touch Booking</h1>
+
+  <section class="rules">
+  <h2>Glow Touch Booking Rules</h2>
+
+  <ul>
+    <li>Appointments must be booked at least <strong>1 week in advance</strong>.</li>
+    <li>Each appointment lasts <strong>1 hour 30 minutes</strong>.</li>
+    <li>Please arrive on time. Late arrivals may shorten your appointment.</li>
+    <li>If you need to cancel, please do so at least <strong>24 hours before</strong>.</li>
+    <li>Glow Touch operates in <strong>Japan time (JST)</strong>.</li>
+  </ul>
+
+  <h3>Opening Days & Times</h3>
+  <ul>
+    <li><strong>Sunday:</strong> 2:00 PM – 3:30 PM (Only 1 appointment available)</li>
+    <li><strong>Monday / Thursday / Saturday:</strong> 5:30 PM – 7:00 PM</li>
+    <li><strong>Closed:</strong> Tuesdays, some Wednesdays, and Fridays</li>
+  </ul>
+
+  <h3>Notes Requirement</h3>
+  <p>
+    In the booking form notes, please tell us your preferences such as:
+  </p>
+  <ul>
+    <li>Soft / relaxing environment</li>
+    <li>Extra gentle treatment</li>
+    <li>Skin or comfort preferences</li>
+  </ul>
+
+  <p class="thankyou">Thank you for choosing Glow Touch 💖</p>
+</section>
 
 <form id="bookingForm">
 <input type="text" name="name" placeholder="Your Name" required>
