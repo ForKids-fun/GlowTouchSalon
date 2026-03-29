@@ -161,23 +161,26 @@ footer{
 <p>© Glow Touch Salon 🌸</p>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
 <script>
-// EmailJS init
 (function(){
-emailjs.init("aYulFPHFq_V9fhxKe");
+  emailjs.init("aYulFPHFq_V9fhxKe"); // PUBLIC KEY
 })();
 
-// Send booking email
-document.getElementById("bookingForm").addEventListener("submit", function(e){
-e.preventDefault();
+document.getElementById("bookingForm").addEventListener("submit", function(e) {
+  e.preventDefault();
 
-emailjs.sendForm("service_h4xpaqh","template_a22ug2j",this)
-.then(function(){
-alert("Booking sent! Check your email 💌");
-document.getElementById("bookingForm").reset();
-}, function(error){
-alert("FAILED... try again 😢");
-});
+  emailjs.sendForm(
+    "service_h4xpaqh",   // SERVICE ID
+    "template_tgosttk",  // TEMPLATE ID
+    this
+  )
+  .then(function() {
+    alert("Booking sent! 🌸 Check your email!");
+  }, function(error) {
+    alert("FAILED 😭 " + JSON.stringify(error));
+  });
 });
 </script>
 
