@@ -132,17 +132,17 @@ button{
 </div>
 
 <script>
+<script>
 emailjs.init("aYulFPHFq_V9fhxKe"); // your public key
 
-// Available times per weekday (0=Sunday, 1=Monday...)
 const availableTimes = {
-  0: ["14:00 – 15:30"], // Sunday
-  1: ["17:30 – 19:00"], // Monday
-  2: [], // Tuesday closed
-  3: [], // Wednesday closed (or some)
-  4: ["17:30 – 19:00"], // Thursday
-  5: [], // Friday closed
-  6: ["17:30 – 19:00"], // Saturday
+  0: ["14:00 – 15:30"],       // Sunday
+  1: ["17:30 – 19:00"],       // Monday
+  2: [],                       // Tuesday closed
+  3: [],                       // Wednesday closed (or some)
+  4: ["17:30 – 19:00"],       // Thursday
+  5: [],                       // Friday closed
+  6: ["17:30 – 19:00"],       // Saturday
 };
 
 const datePicker = document.getElementById("datePicker");
@@ -151,6 +151,18 @@ const availability = document.getElementById("availability");
 
 datePicker.addEventListener("change", function() {
   const selectedDate = new Date(this.value);
+  const today = new Date();
+  today.setHours(0,0,0,0); // reset time for correct comparison
+  const diffTime = selectedDate - today;
+  const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+  // Check 1-week minimum
+  if (diffDays < 7) {
+    availability.textContent = "❌ Appointments must be booked at least 1 week in advance!";
+    timeSlot.value = "";
+    return;
+  }
+
   const day = selectedDate.getDay();
   const slots = availableTimes[day];
 
@@ -163,28 +175,15 @@ datePicker.addEventListener("change", function() {
   }
 });
 
-  const today = new Date();
-const selectedDate = new Date(datePicker.value);
-
-// Check if selected date is at least 7 days ahead
-const diffTime = selectedDate - today;
-const diffDays = diffTime / (1000 * 60 * 60 * 24);
-
-if (diffDays < 7) {
-  availabilityDiv.textContent = "❌ Appointments must be booked at least 1 week in advance!";
-  timeSlotInput.value = "";
-  return;
-}
-
 const form = document.getElementById("bookingForm");
 form.addEventListener("submit", function(e) {
   e.preventDefault();
 
-  // Basic validation
+  // Check all required fields
   if (
     !document.getElementById("name").value.trim() ||
     !document.getElementById("email").value.trim() ||
-    !document.getElementById("datePicker").value ||
+    !datePicker.value ||
     !timeSlot.value ||
     !document.getElementById("service").value ||
     !document.getElementById("notes").value.trim() ||
@@ -202,16 +201,18 @@ form.addEventListener("submit", function(e) {
     notes: document.getElementById("notes").value,
   };
 
-  emailjs.send("service_h4xpaqh","template_tgosttk",templateParams)
+  emailjs.send("service_h4xpaqh", "template_tgosttk", templateParams)
   .then(function(){
     alert("Booking sent! I will check availability soon 🌸");
     form.reset();
     availability.textContent = "";
+    timeSlot.value = "";
   }, function(error){
     alert("Failed to send booking. Try again 🌸");
     console.error(error);
   });
 });
+</script>
 </script>
 </body>
 </html>
