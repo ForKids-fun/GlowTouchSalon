@@ -161,106 +161,90 @@ button{
 </div>
 
 <script>
+<script>
+(function(){
+  emailjs.init("aYulFPHFq_V9fhxKe");
+})();
+
 const form = document.getElementById("bookingForm");
-
-form.addEventListener("submit", function(e) {
-
-  const name = document.getElementById("name");
-  const email = document.getElementById("email");
-  const date = document.getElementById("date");
-  const time = document.getElementById("time");
-  const service = document.getElementById("service");
-  const notes = document.getElementById("notes");
-
-  // check empty fields
-  if (
-    name.value.trim() === "" ||
-    email.value.trim() === "" ||
-    date.value === "" ||
-    time.value === "" ||
-    service.value === "" ||
-    notes.value.trim() === ""
-  ) {
-    alert("Please fill in ALL booking fields 🌸");
-    e.preventDefault();
-    return;
-  }
-
-  // email format check
-  const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
-  if (!email.value.match(emailPattern)) {
-    alert("Please enter a valid email address 💌");
-    e.preventDefault();
-    return;
-  }
-
-  // name length check
-  if (name.value.length < 2) {
-    alert("Name must be at least 2 characters 💖");
-    e.preventDefault();
-    return;
-  }
-
-  // notes length check
-  if (notes.value.length < 10) {
-    alert("Please write at least 10 characters in preferences 💬");
-    e.preventDefault();
-    return;
-  }
-
-  alert("Booking sent! I will see you in our next appointment! 🌸");
-});
-
-  // 📅 Glow Touch Availability Engine
-const datePicker = document.getElementById("datePicker");
+const datePicker = document.getElementById("date");
 const availability = document.getElementById("availability");
-const timeSlot = document.getElementById("timeSlot");
+const timeInput = document.getElementById("time");
 
-datePicker.addEventListener("change", function () {
+
+// ⭐ SHOW AVAILABLE TIME SLOT
+datePicker.addEventListener("change", function() {
+
   const chosenDate = new Date(this.value);
   const today = new Date();
 
-  // clear old messages
-  availability.innerHTML = "";
-  timeSlot.value = "";
+  const diffDays = (chosenDate - today) / (1000 * 60 * 60 * 24);
+  const day = chosenDate.getDay();
 
-  // ❌ Must be at least 7 days in advance
-  const diffDays = Math.ceil((chosenDate - today) / (1000*60*60*24));
-  if (diffDays < 7) {
-    availability.innerHTML = "❌ Must book at least 1 week in advance";
+  // must be 7 days in advance
+  if(diffDays < 7){
+    availability.innerHTML = "❌ Must book at least 7 days in advance";
+    timeInput.value = "";
     return;
   }
 
-  const day = chosenDate.getDay(); 
-  // Sunday=0 Monday=1 Tuesday=2 Wednesday=3 Thursday=4 Friday=5 Saturday=6
-
-  // ❌ CLOSED DAYS
-  if (day === 2 || day === 5) {
-    availability.innerHTML = "❌ Salon closed on this day";
+  // Sunday
+  if(day === 0){
+    availability.innerHTML = "✅ Available 2:00pm – 3:30pm";
+    timeInput.value = "2:00pm – 3:30pm";
     return;
   }
 
-  // 🌸 SUNDAY (only one slot)
-  if (day === 0) {
-    availability.innerHTML = "✅ Available: 2:00 PM – 3:30 PM";
-    timeSlot.value = "2:00 PM – 3:30 PM";
+  // Tuesday & Friday CLOSED
+  if(day === 2 || day === 5){
+    availability.innerHTML = "❌ Closed this day";
+    timeInput.value = "";
     return;
   }
 
-  // 🌸 MONDAY / THURSDAY / SATURDAY
-  if (day === 1 || day === 4 || day === 6) {
-    availability.innerHTML = "✅ Available: 5:30 PM – 7:00 PM";
-    timeSlot.value = "5:30 PM – 7:00 PM";
-    return;
-  }
-
-  // ❌ WEDNESDAY (sometimes closed)
-  if (day === 3) {
-    availability.innerHTML = "⚠️ Wednesday availability varies — will be confirmed by email";
-    timeSlot.value = "To be confirmed";
-    return;
-  }
+  // Other open days
+  availability.innerHTML = "✅ Available 5:30pm – 7:00pm";
+  timeInput.value = "5:30pm – 7:00pm";
 });
+
+
+// ⭐ SEND EMAIL
+form.addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const date = document.getElementById("date").value;
+  const time = document.getElementById("time").value;
+  const service = document.getElementById("service").value;
+  const notes = document.getElementById("notes").value;
+
+  if(!time){
+    alert("Please choose an available date 📅");
+    return;
+  }
+
+  const templateParams = {
+    name: name,
+    email: email,
+    date: date,
+    time: time,
+    service: service,
+    notes: notes
+  };
+
+  emailjs.send("service_h4xpaqh","template_tgosttk",templateParams)
+  .then(function(){
+      alert("Booking sent successfully! 💌");
+      form.reset();
+      availability.innerHTML="";
+  },
+  function(error){
+      alert("FAILED 😭 " + error.text);
+  });
+
+});
+</script>
 </script>
 
 </body>
