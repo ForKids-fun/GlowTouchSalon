@@ -1,14 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Glow Touch Booking</title>
-
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-
 <style>
 body{
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   background: #ffe6f0;
   text-align:center;
   padding:40px;
@@ -41,8 +39,9 @@ button{
 .status{
   font-weight:bold;
   margin:10px;
+  color:#ff3399;
 }
-  .rules {
+.rules {
   background: #fff0f5;
   padding: 30px;
   border-radius: 20px;
@@ -50,92 +49,64 @@ button{
   margin: 40px auto;
   font-family: Arial, sans-serif;
 }
-
-.rules h2 {
+.rules h2, .rules h3 {
   text-align: center;
-  color: #ff69b4;
+  color: #ff66a3;
 }
-
-.rules h3 {
-  margin-top: 25px;
-  color: #ff69b4;
-}
-
-.rules ul {
-  padding-left: 20px;
-}
-
-.rules li {
-  margin: 8px 0;
-}
-
+.rules ul { padding-left:20px; }
+.rules li { margin:8px 0; }
 .agreement {
   margin-top: 20px;
   text-align: center;
   font-size: 14px;
 }
-
-.agreement input {
-  margin-right: 8px;
-  transform: scale(1.2);
-}
-  
-.thankyou {
-  text-align: center;
-  margin-top: 20px;
-  font-weight: bold;
-  color: #ff69b4;
-}
+.agreement input { margin-right:8px; transform:scale(1.2); }
+.thankyou { text-align:center; margin-top:20px; font-weight:bold; color:#ff69b4; }
 </style>
 </head>
-
 <body>
 <div class="container">
 <h1>🌸 Glow Touch Booking</h1>
 
-  <section class="rules">
-  <h2>Glow Touch Booking Rules</h2>
+<section class="rules">
+<h2>Glow Touch Booking Rules</h2>
+<ul>
+  <li>Appointments must be booked at least <strong>1 week in advance</strong>.</li>
+  <li>Each appointment lasts <strong>1 hour 30 minutes</strong>.</li>
+  <li>Please arrive on time. Late arrivals may shorten your appointment.</li>
+  <li>If you need to cancel, please do so at least <strong>24 hours before</strong>.</li>
+  <li>Glow Touch operates in <strong>Japan time (JST)</strong>.</li>
+</ul>
 
-  <ul>
-    <li>Appointments must be booked at least <strong>1 week in advance</strong>.</li>
-    <li>Each appointment lasts <strong>1 hour 30 minutes</strong>.</li>
-    <li>Please arrive on time. Late arrivals may shorten your appointment.</li>
-    <li>If you need to cancel, please do so at least <strong>24 hours before</strong>.</li>
-    <li>Glow Touch operates in <strong>Japan time (JST)</strong>.</li>
-  </ul>
+<h3>Opening Days & Times</h3>
+<ul>
+  <li><strong>Sunday:</strong> 2:00 PM – 3:30 PM (Only 1 appointment available)</li>
+  <li><strong>Monday / Thursday / Saturday:</strong> 5:30 PM – 7:00 PM</li>
+  <li><strong>Closed:</strong> Tuesdays, some Wednesdays, and Fridays</li>
+</ul>
 
-  <h3>Opening Days & Times</h3>
-  <ul>
-    <li><strong>Sunday:</strong> 2:00 PM – 3:30 PM (Only 1 appointment available)</li>
-    <li><strong>Monday / Thursday / Saturday:</strong> 5:30 PM – 7:00 PM</li>
-    <li><strong>Closed:</strong> Tuesdays, some Wednesdays, and Fridays</li>
-  </ul>
+<h3>Notes Requirement</h3>
+<p>Please tell us your preferences in notes:</p>
+<ul>
+  <li>Soft / relaxing environment</li>
+  <li>Extra gentle treatment</li>
+  <li>Skin or comfort preferences</li>
+</ul>
 
-  <h3>Notes Requirement</h3>
-  <p>
-    In the booking form notes, please tell us your preferences such as:
-  </p>
-  <ul>
-    <li>Soft / relaxing environment</li>
-    <li>Extra gentle treatment</li>
-    <li>Skin or comfort preferences</li>
-  </ul>
-
-  <p class="thankyou">Thank you for choosing Glow Touch 💖</p>
+<p class="thankyou">Thank you for choosing Glow Touch 💖</p>
 </section>
 
 <form id="bookingForm">
-<input type="text" name="name" placeholder="Your Name" required>
-<input type="email" name="email" placeholder="Your Email" required>
+<input type="text" name="name" id="name" placeholder="Your Name" required>
+<input type="email" name="email" id="email" placeholder="Your Email" required>
 
 <label>Pick a Date 📅</label>
 <input type="date" id="datePicker" required>
 
 <div id="availability" class="status"></div>
-
 <input type="text" id="timeSlot" name="time" readonly placeholder="Time slot will appear">
 
-<select name="service" required>
+<select name="service" id="service" required>
 <option value="">Select Service</option>
 <option>Hair Care</option>
 <option>Skincare</option>
@@ -147,7 +118,7 @@ button{
 <option>Glow Touch Premium</option>
 </select>
 
-<textarea name="notes" placeholder="Tell us your vibe, preferences, soft music, environment etc 💖"></textarea>
+<textarea name="notes" id="notes" placeholder="Tell us your vibe, preferences, soft music, environment etc 💖" required></textarea>
 
 <div class="agreement">
   <label>
@@ -155,97 +126,79 @@ button{
     I have read and agree to the Glow Touch Booking Rules 💖
   </label>
 </div>
-  
+
 <button type="submit">Book Appointment 💌</button>
 </form>
 </div>
 
 <script>
-<script>
-(function(){
-  emailjs.init("aYulFPHFq_V9fhxKe");
-})();
+emailjs.init("aYulFPHFq_V9fhxKe"); // your public key
 
-const form = document.getElementById("bookingForm");
-const datePicker = document.getElementById("date");
+// Available times per weekday (0=Sunday, 1=Monday...)
+const availableTimes = {
+  0: ["14:00 – 15:30"], // Sunday
+  1: ["17:30 – 19:00"], // Monday
+  2: [], // Tuesday closed
+  3: [], // Wednesday closed (or some)
+  4: ["17:30 – 19:00"], // Thursday
+  5: [], // Friday closed
+  6: ["17:30 – 19:00"], // Saturday
+};
+
+const datePicker = document.getElementById("datePicker");
+const timeSlot = document.getElementById("timeSlot");
 const availability = document.getElementById("availability");
-const timeInput = document.getElementById("time");
 
-
-// ⭐ SHOW AVAILABLE TIME SLOT
 datePicker.addEventListener("change", function() {
+  const selectedDate = new Date(this.value);
+  const day = selectedDate.getDay();
+  const slots = availableTimes[day];
 
-  const chosenDate = new Date(this.value);
-  const today = new Date();
-
-  const diffDays = (chosenDate - today) / (1000 * 60 * 60 * 24);
-  const day = chosenDate.getDay();
-
-  // must be 7 days in advance
-  if(diffDays < 7){
-    availability.innerHTML = "❌ Must book at least 7 days in advance";
-    timeInput.value = "";
-    return;
+  if (!slots || slots.length === 0) {
+    availability.textContent = "No appointments available on this day 😢";
+    timeSlot.value = "";
+  } else {
+    availability.textContent = "Available time slot: " + slots[0];
+    timeSlot.value = slots[0];
   }
-
-  // Sunday
-  if(day === 0){
-    availability.innerHTML = "✅ Available 2:00pm – 3:30pm";
-    timeInput.value = "2:00pm – 3:30pm";
-    return;
-  }
-
-  // Tuesday & Friday CLOSED
-  if(day === 2 || day === 5){
-    availability.innerHTML = "❌ Closed this day";
-    timeInput.value = "";
-    return;
-  }
-
-  // Other open days
-  availability.innerHTML = "✅ Available 5:30pm – 7:00pm";
-  timeInput.value = "5:30pm – 7:00pm";
 });
 
-
-// ⭐ SEND EMAIL
+const form = document.getElementById("bookingForm");
 form.addEventListener("submit", function(e) {
   e.preventDefault();
 
-  const name = document.getElementById("name").value;
-  const email = document.getElementById("email").value;
-  const date = document.getElementById("date").value;
-  const time = document.getElementById("time").value;
-  const service = document.getElementById("service").value;
-  const notes = document.getElementById("notes").value;
-
-  if(!time){
-    alert("Please choose an available date 📅");
+  // Basic validation
+  if (
+    !document.getElementById("name").value.trim() ||
+    !document.getElementById("email").value.trim() ||
+    !document.getElementById("datePicker").value ||
+    !timeSlot.value ||
+    !document.getElementById("service").value ||
+    !document.getElementById("notes").value.trim() ||
+    !document.getElementById("agreeRules").checked
+  ) {
+    alert("Please fill in all booking fields and agree to rules 🌸");
     return;
   }
 
   const templateParams = {
-    name: name,
-    email: email,
-    date: date,
-    time: time,
-    service: service,
-    notes: notes
+    name: document.getElementById("name").value,
+    email: document.getElementById("email").value,
+    service: document.getElementById("service").value,
+    time: timeSlot.value,
+    notes: document.getElementById("notes").value,
   };
 
   emailjs.send("service_h4xpaqh","template_tgosttk",templateParams)
   .then(function(){
-      alert("Booking sent successfully! 💌");
-      form.reset();
-      availability.innerHTML="";
-  },
-  function(error){
-      alert("FAILED 😭 " + error.text);
+    alert("Booking sent! I will check availability soon 🌸");
+    form.reset();
+    availability.textContent = "";
+  }, function(error){
+    alert("Failed to send booking. Try again 🌸");
+    console.error(error);
   });
-
 });
 </script>
-</script>
-
 </body>
 </html>
