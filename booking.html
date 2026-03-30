@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>Glow Touch Booking</title>
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
 <style>
 body{
   font-family: Arial, sans-serif;
@@ -132,17 +133,17 @@ button{
 </div>
 
 <script>
-<script>
-emailjs.init("aYulFPHFq_V9fhxKe"); // your public key
+emailjs.init("aYulFPHFq_V9fhxKe"); // your EmailJS public key
 
+// Available times per weekday (0=Sunday, 1=Monday...)
 const availableTimes = {
-  0: ["14:00 – 15:30"],       // Sunday
-  1: ["17:30 – 19:00"],       // Monday
-  2: [],                       // Tuesday closed
-  3: [],                       // Wednesday closed (or some)
-  4: ["17:30 – 19:00"],       // Thursday
-  5: [],                       // Friday closed
-  6: ["17:30 – 19:00"],       // Saturday
+  0: ["14:00 – 15:30"], // Sunday
+  1: ["17:30 – 19:00"], // Monday
+  2: [], // Tuesday closed
+  3: [], // Wednesday closed (or some)
+  4: ["17:30 – 19:00"], // Thursday
+  5: [], // Friday closed
+  6: ["17:30 – 19:00"], // Saturday
 };
 
 const datePicker = document.getElementById("datePicker");
@@ -152,12 +153,10 @@ const availability = document.getElementById("availability");
 datePicker.addEventListener("change", function() {
   const selectedDate = new Date(this.value);
   const today = new Date();
-  today.setHours(0,0,0,0); // reset time for correct comparison
   const diffTime = selectedDate - today;
   const diffDays = diffTime / (1000 * 60 * 60 * 24);
 
-  // Check 1-week minimum
-  if (diffDays < 7) {
+  if(diffDays < 7) {
     availability.textContent = "❌ Appointments must be booked at least 1 week in advance!";
     timeSlot.value = "";
     return;
@@ -179,11 +178,11 @@ const form = document.getElementById("bookingForm");
 form.addEventListener("submit", function(e) {
   e.preventDefault();
 
-  // Check all required fields
+  // Validation
   if (
     !document.getElementById("name").value.trim() ||
     !document.getElementById("email").value.trim() ||
-    !datePicker.value ||
+    !document.getElementById("datePicker").value ||
     !timeSlot.value ||
     !document.getElementById("service").value ||
     !document.getElementById("notes").value.trim() ||
@@ -201,7 +200,7 @@ form.addEventListener("submit", function(e) {
     notes: document.getElementById("notes").value,
   };
 
-  emailjs.send("service_h4xpaqh", "template_tgosttk", templateParams)
+  emailjs.send("service_h4xpaqh","template_tgosttk",templateParams)
   .then(function(){
     alert("Booking sent! I will check availability soon 🌸");
     form.reset();
@@ -212,7 +211,6 @@ form.addEventListener("submit", function(e) {
     console.error(error);
   });
 });
-</script>
 </script>
 </body>
 </html>
