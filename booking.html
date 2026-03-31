@@ -132,9 +132,8 @@ button{
 </div>
 
 <script>
-emailjs.init("aYulFPHFq_V9fhxKe"); // your public key
+emailjs.init("aYulFPHFq_V9fhxKe"); // public key only, no secret
 
-// Available times per weekday (0=Sunday, 1=Monday...)
 const availableTimes = {
   0: ["14:00 – 15:30"], // Sunday
   1: ["17:30 – 19:00"], // Monday
@@ -176,7 +175,6 @@ const form = document.getElementById("bookingForm");
 form.addEventListener("submit", function(e) {
   e.preventDefault();
 
-  // Basic validation
   if (
     !document.getElementById("name").value.trim() ||
     !document.getElementById("email").value.trim() ||
