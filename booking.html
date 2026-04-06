@@ -158,18 +158,35 @@ if(!name||!email||!date||!timeSlot.value||!service||!notes||!agreed){
 alert("Complete all fields 🌸");return;
 }
 
-/* SEND EMAIL */
-emailjs.send("service_h4xpaqh","template_tgosttk",{
-name,email,service,date,time:timeSlot.value,notes
+/* SEND TO GOOGLE SHEETS */
+fetch("https://script.google.com/macros/s/AKfycbyxv6cQYjwhrjgIrpNLMQKT6ovg3fmKu2aTbk7BowUFBOHvTbuzmrlKPOxZrhHm7042/exec",{
+  method:"POST",
+  body:JSON.stringify({
+    name:name,
+    email:email,
+    date:date,
+    time:timeSlot.value,
+    service:service,
+    notes:notes
+  })
 })
 .then(()=>{
-alert("Booking sent! 🌸");
-document.getElementById("bookingForm").reset();
-availability.textContent="";
+
+  /* THEN SEND EMAIL */
+  emailjs.send("service_h4xpaqh","template_tgosttk",{
+    name,email,service,date,time:timeSlot.value,notes
+  })
+  .then(()=>{
+    alert("Booking sent & saved! 🌸");
+    document.getElementById("bookingForm").reset();
+    availability.textContent="";
+  })
+
 })
 .catch(()=>{
-alert("Failed to send booking 😢");
+  alert("Error sending booking 😢");
 });
+
 });
 </script>
 </body>
