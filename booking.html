@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <title>Glow Touch Booking</title>
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
 <style>
 body{
-  font-family: Arial, sans-serif;
+  font-family: Arial;
   background:#ffe6f0;
   text-align:center;
   padding:40px;
@@ -42,6 +41,7 @@ button{
 </head>
 
 <body>
+
 <div class="container">
 <h1>🌸 Glow Touch Booking</h1>
 
@@ -77,9 +77,7 @@ button{
 </div>
 
 <script>
-emailjs.init("aYulFPHFq_V9fhxKe");
-
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbyxv6cQYjwhrjgIrpNLMQKT6ovg3fmKu2aTbk7BowUFBOHvTbuzmrlKPOxZrhHm7042/exec";
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbw51MkDV3v3_LFPwv_tfapYsI9XGzhmaNVd4TJDHzV0W7zDXS9-EN8cgT5fFOMlJjns/exec";
 
 const availableTimes={
 0:["14:00 – 15:30"],
@@ -128,29 +126,14 @@ document.getElementById("bookingForm").addEventListener("submit",async function(
   const notes=document.getElementById("notes").value.trim();
   const agreed=document.getElementById("agreeRules").checked;
 
-  const emailRegex=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const fakeEmails=["test@test.com","example@email.com","fake@mail.com","123@123.com"];
-
-  if(!emailRegex.test(email) || fakeEmails.includes(email.toLowerCase())){
-    alert("Enter a real email 💌");
-    return;
-  }
-
-  if(notes.length<15){
-    alert("Write at least 15 characters in notes 💖");
-    return;
-  }
-
   if(!name||!email||!date||!timeSlot.value||!service||!notes||!agreed){
     alert("Complete all fields 🌸");
     return;
   }
 
   try{
-    /* SAVE TO GOOGLE SHEETS (FIXED) */
     await fetch(SCRIPT_URL,{
       method:"POST",
-      mode:"no-cors",   // ⭐ THIS WAS THE MISSING PIECE
       headers:{ "Content-Type":"application/json" },
       body:JSON.stringify({
         name:name,
@@ -162,12 +145,7 @@ document.getElementById("bookingForm").addEventListener("submit",async function(
       })
     });
 
-    /* SEND EMAIL */
-    await emailjs.send("service_h4xpaqh","template_tgosttk",{
-      name,email,service,date,time:timeSlot.value,notes
-    });
-
-    alert("Booking sent & saved! 🌸");
+    alert("Booking saved! 🌸");
     document.getElementById("bookingForm").reset();
     availability.textContent="";
 
