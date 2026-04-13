@@ -147,24 +147,22 @@ document.getElementById("bookingForm").addEventListener("submit",async function(
   }
 
   try{
-    /* STEP 1 — SAVE BOOKING TO GOOGLE SHEETS */
-    const response = await fetch(SCRIPT_URL,{
+    /* SAVE TO GOOGLE SHEETS (FIXED) */
+    await fetch(SCRIPT_URL,{
       method:"POST",
+      mode:"no-cors",   // ⭐ THIS WAS THE MISSING PIECE
       headers:{ "Content-Type":"application/json" },
       body:JSON.stringify({
-        name: name,
-        email: email,
-        date: date,
-        time: timeSlot.value,
-        service: service,
-        notes: notes
+        name:name,
+        email:email,
+        date:date,
+        time:timeSlot.value,
+        service:service,
+        notes:notes
       })
     });
 
-    const result = await response.text();
-    console.log("Sheets response:", result);
-
-    /* STEP 2 — SEND EMAIL */
+    /* SEND EMAIL */
     await emailjs.send("service_h4xpaqh","template_tgosttk",{
       name,email,service,date,time:timeSlot.value,notes
     });
