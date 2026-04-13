@@ -147,16 +147,24 @@ document.getElementById("bookingForm").addEventListener("submit",async function(
   }
 
   try{
-    // SAVE TO GOOGLE SHEETS
-    await fetch(SCRIPT_URL,{
+    /* STEP 1 — SAVE BOOKING TO GOOGLE SHEETS */
+    const response = await fetch(SCRIPT_URL,{
       method:"POST",
       headers:{ "Content-Type":"application/json" },
       body:JSON.stringify({
-        name,email,date,time:timeSlot.value,service,notes
+        name: name,
+        email: email,
+        date: date,
+        time: timeSlot.value,
+        service: service,
+        notes: notes
       })
     });
 
-    // SEND EMAIL CONFIRMATION
+    const result = await response.text();
+    console.log("Sheets response:", result);
+
+    /* STEP 2 — SEND EMAIL */
     await emailjs.send("service_h4xpaqh","template_tgosttk",{
       name,email,service,date,time:timeSlot.value,notes
     });
@@ -166,8 +174,8 @@ document.getElementById("bookingForm").addEventListener("submit",async function(
     availability.textContent="";
 
   }catch(err){
-    alert("Error sending booking 😢");
     console.error(err);
+    alert("Error sending booking 😢");
   }
 });
 </script>
