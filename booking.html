@@ -38,13 +38,6 @@ button{
   cursor:pointer;
 }
 .status{font-weight:bold;margin:10px;color:#ff3399;}
-.rules{
-  background:#fff0f5;
-  padding:30px;
-  border-radius:20px;
-  max-width:700px;
-  margin:40px auto;
-}
 </style>
 </head>
 
@@ -86,6 +79,8 @@ button{
 <script>
 emailjs.init("aYulFPHFq_V9fhxKe");
 
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbyxv6cQYjwhrjgIrpNLMQKT6ovg3fmKu2aTbk7BowUFBOHvTbuzmrlKPOxZrhHm7042/exec";
+
 const availableTimes={
 0:["14:00 – 15:30"],
 1:["17:30 – 19:00"],
@@ -101,93 +96,81 @@ const timeSlot=document.getElementById("timeSlot");
 const availability=document.getElementById("availability");
 
 datePicker.addEventListener("change",function(){
-const selectedDate=new Date(this.value);
-const today=new Date();
-today.setHours(0,0,0,0);
+  const selectedDate=new Date(this.value);
+  const today=new Date();
+  today.setHours(0,0,0,0);
 
-const diffDays=(selectedDate-today)/(1000*60*60*24);
-const day=selectedDate.getDay();
-const slots=availableTimes[day];
+  const diffDays=(selectedDate-today)/(1000*60*60*24);
+  const day=selectedDate.getDay();
+  const slots=availableTimes[day];
 
-if(diffDays<7){
-availability.textContent="❌ Must book 1 week in advance!";
-timeSlot.value="";
-}
-else if(!slots||slots.length===0){
-availability.textContent="No appointments available 😢";
-timeSlot.value="";
-}
-else{
-availability.textContent="Available time: "+slots[0];
-timeSlot.value=slots[0];
-}
+  if(diffDays<7){
+    availability.textContent="❌ Must book 1 week in advance!";
+    timeSlot.value="";
+  }
+  else if(!slots || slots.length===0){
+    availability.textContent="No appointments available 😢";
+    timeSlot.value="";
+  }
+  else{
+    availability.textContent="Available time: "+slots[0];
+    timeSlot.value=slots[0];
+  }
 });
 
-document.getElementById("bookingForm").addEventListener("submit",function(e){
-e.preventDefault();
+document.getElementById("bookingForm").addEventListener("submit",async function(e){
+  e.preventDefault();
 
-const name=document.getElementById("name").value.trim();
-const email=document.getElementById("email").value.trim();
-const date=document.getElementById("datePicker").value;
-const service=document.getElementById("service").value;
-const notes=document.getElementById("notes").value.trim();
-const agreed=document.getElementById("agreeRules").checked;
+  const name=document.getElementById("name").value.trim();
+  const email=document.getElementById("email").value.trim();
+  const date=document.getElementById("datePicker").value;
+  const service=document.getElementById("service").value;
+  const notes=document.getElementById("notes").value.trim();
+  const agreed=document.getElementById("agreeRules").checked;
 
-/* EMAIL VALIDATION */
-const emailRegex=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const fakeEmails=["test@test.com","example@email.com","fake@mail.com","123@123.com"];
+  const emailRegex=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const fakeEmails=["test@test.com","example@email.com","fake@mail.com","123@123.com"];
 
-if(!emailRegex.test(email)){
-alert("Enter a real email 💌");return;
-}
-if(fakeEmails.includes(email.toLowerCase())){
-alert("Use your real email 💌");return;
-}
+  if(!emailRegex.test(email) || fakeEmails.includes(email.toLowerCase())){
+    alert("Enter a real email 💌");
+    return;
+  }
 
-/* NOTES VALIDATION */
-const banned=["hi","hello","ok","test","none","no","n/a"];
-if(notes.length<15){
-alert("Write at least 15 characters in notes 💖");return;
-}
-if(banned.includes(notes.toLowerCase())){
-alert("Write real preferences in notes 💖");return;
-}
+  if(notes.length<15){
+    alert("Write at least 15 characters in notes 💖");
+    return;
+  }
 
-/* FINAL CHECK */
-if(!name||!email||!date||!timeSlot.value||!service||!notes||!agreed){
-alert("Complete all fields 🌸");return;
-}
+  if(!name||!email||!date||!timeSlot.value||!service||!notes||!agreed){
+    alert("Complete all fields 🌸");
+    return;
+  }
 
-/* SEND TO GOOGLE SHEETS */
-fetch("https://script.google.com/macros/s/AKfycbyxv6cQYjwhrjgIrpNLMQKT6ovg3fmKu2aTbk7BowUFBOHvTbuzmrlKPOxZrhHm7042/exec",{
-  method:"POST",
-  body:JSON.stringify({
-    name:name,
-    email:email,
-    date:date,
-    time:timeSlot.value,
-    service:service,
-    notes:notes
-  })
-})
-.then(()=>{
+  try{
+    // SAVE TO GOOGLE SHEETS
+    await fetch(SCRIPT_URL,{
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body:JSON.stringify({
+        name,email,date,time:timeSlot.value,service,notes
+      })
+    });
 
-  /* THEN SEND EMAIL */
-  emailjs.send("service_h4xpaqh","template_tgosttk",{
-    name,email,service,date,time:timeSlot.value,notes
-  })
-  .then(()=>{
+    // SEND EMAIL CONFIRMATION
+    await emailjs.send("service_h4xpaqh","template_tgosttk",{
+      name,email,service,date,time:timeSlot.value,notes
+    });
+
     alert("Booking sent & saved! 🌸");
     document.getElementById("bookingForm").reset();
     availability.textContent="";
-  })
 
-})
-.catch(()=>{
-  alert("Error sending booking 😢");
-});
-fetch("https://script.google.com/macros/s/AKfycbyxv6cQYjwhrjgIrpNLMQKT6ovg3fmKu2aTbk7BowUFBOHvTbuzmrlKPOxZrhHm7042/exec",{
+  }catch(err){
+    alert("Error sending booking 😢");
+    console.error(err);
+  }
 });
 </script>
+
 </body>
 </html>
