@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <title>Glow Touch Booking</title>
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 
 <style>
 body{
-  font-family: Arial, sans-serif;
+  font-family: Arial;
   background:#ffe6f0;
   text-align:center;
   padding:40px;
@@ -42,6 +41,7 @@ button{
 </head>
 
 <body>
+
 <div class="container">
 <h1>🌸 Glow Touch Booking</h1>
 
@@ -74,12 +74,9 @@ button{
 
 <button type="submit">Book Appointment 💌</button>
 </form>
-  <form method="POST" action="https://script.google.com/macros/s/AKfycbyxv6cQYjwhrjgIrpNLMQKT6ovg3fmKu2aTbk7BowUFBOHvTbuzmrlKPOxZrhHm7042/exec">
 </div>
 
 <script>
-emailjs.init("aYulFPHFq_V9fhxKe");
-
 const SCRIPT_URL="https://script.google.com/macros/s/AKfycbyxv6cQYjwhrjgIrpNLMQKT6ovg3fmKu2aTbk7BowUFBOHvTbuzmrlKPOxZrhHm7042/exec";
 
 const availableTimes={
@@ -96,7 +93,7 @@ const datePicker=document.getElementById("datePicker");
 const timeSlot=document.getElementById("timeSlot");
 const availability=document.getElementById("availability");
 
-/* SHOW TIME */
+/* show time */
 datePicker.addEventListener("change",function(){
   const selectedDate=new Date(this.value);
   const today=new Date();
@@ -120,7 +117,7 @@ datePicker.addEventListener("change",function(){
   }
 });
 
-/* SUBMIT FORM */
+/* submit */
 document.getElementById("bookingForm").addEventListener("submit",async function(e){
   e.preventDefault();
 
@@ -131,49 +128,26 @@ document.getElementById("bookingForm").addEventListener("submit",async function(
   const notes=document.getElementById("notes").value.trim();
   const agreed=document.getElementById("agreeRules").checked;
 
-  const emailRegex=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  if(!emailRegex.test(email)){
-    alert("Enter a real email 💌");
-    return;
-  }
-
-  if(notes.length<15){
-    alert("Write at least 15 characters in notes 💖");
-    return;
-  }
-
   if(!name||!email||!date||!timeSlot.value||!service||!notes||!agreed){
     alert("Complete all fields 🌸");
     return;
   }
 
-  try{
-    /* SEND TO GOOGLE SHEETS (FIXED FORM FORMAT) */
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("email", email);
-    formData.append("date", date);
-    formData.append("time", timeSlot.value);
-    formData.append("service", service);
-    formData.append("notes", notes);
+  const formData = new FormData();
+  formData.append("name", name);
+  formData.append("email", email);
+  formData.append("date", date);
+  formData.append("time", timeSlot.value);
+  formData.append("service", service);
+  formData.append("notes", notes);
 
+  try{
     await fetch(SCRIPT_URL,{
       method:"POST",
       body:formData
     });
 
-    /* EMAIL CONFIRMATION */
-    await emailjs.send("service_h4xpaqh","template_tgosttk",{
-      name,
-      email,
-      service,
-      date,
-      time:timeSlot.value,
-      notes
-    });
-
-    alert("Booking sent & saved! 🌸");
+    alert("Booking saved! 🌸");
     document.getElementById("bookingForm").reset();
     availability.textContent="";
 
