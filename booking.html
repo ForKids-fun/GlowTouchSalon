@@ -96,7 +96,7 @@ const datePicker=document.getElementById("datePicker");
 const timeSlot=document.getElementById("timeSlot");
 const availability=document.getElementById("availability");
 
-/* SHOW AVAILABLE TIME */
+/* SHOW TIME */
 datePicker.addEventListener("change",function(){
   const selectedDate=new Date(this.value);
   const today=new Date();
@@ -120,7 +120,7 @@ datePicker.addEventListener("change",function(){
   }
 });
 
-/* SUBMIT BOOKING */
+/* SUBMIT FORM */
 document.getElementById("bookingForm").addEventListener("submit",async function(e){
   e.preventDefault();
 
@@ -132,9 +132,8 @@ document.getElementById("bookingForm").addEventListener("submit",async function(
   const agreed=document.getElementById("agreeRules").checked;
 
   const emailRegex=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const fakeEmails=["test@test.com","example@email.com","fake@mail.com","123@123.com"];
 
-  if(!emailRegex.test(email) || fakeEmails.includes(email.toLowerCase())){
+  if(!emailRegex.test(email)){
     alert("Enter a real email 💌");
     return;
   }
@@ -150,21 +149,21 @@ document.getElementById("bookingForm").addEventListener("submit",async function(
   }
 
   try{
-    /* SEND TO GOOGLE SHEETS */
+    /* SEND TO GOOGLE SHEETS (FIXED FORM FORMAT) */
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("email", email);
+    formData.append("date", date);
+    formData.append("time", timeSlot.value);
+    formData.append("service", service);
+    formData.append("notes", notes);
+
     await fetch(SCRIPT_URL,{
       method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body:JSON.stringify({
-        name,
-        email,
-        date,
-        time:timeSlot.value,
-        service,
-        notes
-      })
+      body:formData
     });
 
-    /* SEND EMAIL CONFIRMATION */
+    /* EMAIL CONFIRMATION */
     await emailjs.send("service_h4xpaqh","template_tgosttk",{
       name,
       email,
