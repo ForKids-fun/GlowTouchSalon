@@ -52,6 +52,7 @@ button{
 <label>Pick a Date 📅</label>
 <input type="date" id="datePicker" required>
 <div id="availability" class="status"></div>
+
 <input type="text" id="timeSlot" readonly placeholder="Time slot will appear">
 
 <select id="service" required>
@@ -133,7 +134,7 @@ document.getElementById("bookingForm").addEventListener("submit",async function(
     return;
   }
 
-  // 🔥 FIX: URL encoded instead of FormData
+  /* ✅ FINAL FIXED REQUEST */
   const data = new URLSearchParams();
   data.append("name", name);
   data.append("email", email);
@@ -162,10 +163,11 @@ document.getElementById("bookingForm").addEventListener("submit",async function(
     availability.textContent="";
 
   }catch(err){
-    console.error(err);
+    console.error("ERROR:", err);
     alert("Error sending booking 😢 (check console)");
   }
 });
 </script>
+
 </body>
 </html>
