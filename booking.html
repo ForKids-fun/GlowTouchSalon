@@ -93,7 +93,7 @@ const datePicker=document.getElementById("datePicker");
 const timeSlot=document.getElementById("timeSlot");
 const availability=document.getElementById("availability");
 
-/* show time */
+/* SHOW TIME */
 datePicker.addEventListener("change",function(){
   const selectedDate=new Date(this.value);
   const today=new Date();
@@ -117,7 +117,7 @@ datePicker.addEventListener("change",function(){
   }
 });
 
-/* submit */
+/* SUBMIT */
 document.getElementById("bookingForm").addEventListener("submit",async function(e){
   e.preventDefault();
 
@@ -133,30 +133,38 @@ document.getElementById("bookingForm").addEventListener("submit",async function(
     return;
   }
 
-  const formData = new FormData();
-  formData.append("name", name);
-  formData.append("email", email);
-  formData.append("date", date);
-  formData.append("time", timeSlot.value);
-  formData.append("service", service);
-  formData.append("notes", notes);
+  const formData=new FormData();
+  formData.append("name",name);
+  formData.append("email",email);
+  formData.append("date",date);
+  formData.append("time",timeSlot.value);
+  formData.append("service",service);
+  formData.append("notes",notes);
 
   try{
-    await fetch(SCRIPT_URL,{
+    console.log("Sending booking...");
+
+    const response = await fetch(SCRIPT_URL,{
       method:"POST",
       body:formData
     });
+
+    const text = await response.text();
+    console.log("Server response:", text);
+
+    if(!response.ok){
+      throw new Error(text);
+    }
 
     alert("Booking saved! 🌸");
     document.getElementById("bookingForm").reset();
     availability.textContent="";
 
   }catch(err){
-    console.error(err);
-    alert("Error sending booking 😢");
+    console.error("ERROR:", err);
+    alert("Error sending booking 😢 (check console)");
   }
 });
 </script>
-
 </body>
 </html>
