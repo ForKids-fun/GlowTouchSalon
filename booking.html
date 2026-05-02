@@ -96,6 +96,7 @@ const datePicker=document.getElementById("datePicker");
 const timeSlot=document.getElementById("timeSlot");
 const availability=document.getElementById("availability");
 
+/* SHOW AVAILABLE TIME */
 datePicker.addEventListener("change",function(){
   const selectedDate=new Date(this.value);
   const today=new Date();
@@ -119,6 +120,7 @@ datePicker.addEventListener("change",function(){
   }
 });
 
+/* SUBMIT BOOKING */
 document.getElementById("bookingForm").addEventListener("submit",async function(e){
   e.preventDefault();
 
@@ -148,24 +150,28 @@ document.getElementById("bookingForm").addEventListener("submit",async function(
   }
 
   try{
-    /* SAVE TO GOOGLE SHEETS (FIXED) */
+    /* SEND TO GOOGLE SHEETS */
     await fetch(SCRIPT_URL,{
       method:"POST",
-      mode:"no-cors",   // ⭐ THIS WAS THE MISSING PIECE
       headers:{ "Content-Type":"application/json" },
       body:JSON.stringify({
-        name:name,
-        email:email,
-        date:date,
+        name,
+        email,
+        date,
         time:timeSlot.value,
-        service:service,
-        notes:notes
+        service,
+        notes
       })
     });
 
-    /* SEND EMAIL */
+    /* SEND EMAIL CONFIRMATION */
     await emailjs.send("service_h4xpaqh","template_tgosttk",{
-      name,email,service,date,time:timeSlot.value,notes
+      name,
+      email,
+      service,
+      date,
+      time:timeSlot.value,
+      notes
     });
 
     alert("Booking sent & saved! 🌸");
