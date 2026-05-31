@@ -135,7 +135,7 @@ document.getElementById("bookingForm").addEventListener("submit",async function(
     return;
   }
 
-  const formData=new FormData();
+  const formData=new URLSearchParams();
 
   formData.append("entry.1515449340",name);
   formData.append("entry.186587811",email);
@@ -148,6 +148,9 @@ document.getElementById("bookingForm").addEventListener("submit",async function(
     await fetch(FORM_URL,{
       method:"POST",
       mode:"no-cors",
+      headers:{
+        "Content-Type":"application/x-www-form-urlencoded"
+      },
       body:formData
     });
 
