@@ -91,7 +91,7 @@ button{
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwrgh8A_DxwCb5bVL8_Snsvk4ZAwjpidaj6Mq6i39cHfF8j1HRvmEwSMa61DtJxGlve/exec";
 
-/* 🌸 WEEKLY SCHEDULE */
+/* weekly schedule */
 const schedule = {
   0:["14:00 – 15:30"],
   1:["17:30 – 19:00"],
@@ -106,7 +106,7 @@ const datePicker = document.getElementById("datePicker");
 const timeSlot = document.getElementById("timeSlot");
 const availability = document.getElementById("availability");
 
-/* AUTO TIME SELECT */
+/* AUTO TIME */
 datePicker.addEventListener("change", () => {
   const day = new Date(datePicker.value).getDay();
   const slots = schedule[day];
@@ -116,11 +116,11 @@ datePicker.addEventListener("change", () => {
     timeSlot.value = "";
   } else {
     timeSlot.value = slots[0];
-    availability.textContent = "Auto time selected 💖 " + slots[0];
+    availability.textContent = "Auto-selected 💖 " + slots[0];
   }
 });
 
-/* SUBMIT BOOKING */
+/* SUBMIT */
 document.getElementById("bookingForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -133,7 +133,7 @@ document.getElementById("bookingForm").addEventListener("submit", async (e) => {
   const agreed = document.getElementById("agreeRules").checked;
 
   if (!name || !email || !date || !time || !service || !agreed) {
-    alert("Please fill all required fields 💖");
+    alert("Fill all required fields 💖");
     return;
   }
 
@@ -146,6 +146,7 @@ document.getElementById("bookingForm").addEventListener("submit", async (e) => {
   data.append("notes", notes);
 
   try {
+
     const res = await fetch(SCRIPT_URL, {
       method: "POST",
       body: data
@@ -154,12 +155,9 @@ document.getElementById("bookingForm").addEventListener("submit", async (e) => {
     const text = await res.text();
 
     console.log("SERVER RESPONSE 👉", text);
-    alert("Server says: " + text);
 
-    if (text === "TAKEN") {
-      alert("❌ Slot already booked!");
-      return;
-    }
+    /* show REAL backend response */
+    alert("Server says: " + text);
 
     if (text !== "OK") {
       throw new Error(text);
@@ -173,7 +171,7 @@ document.getElementById("bookingForm").addEventListener("submit", async (e) => {
 
   } catch (err) {
     console.error("ERROR:", err);
-    alert("Booking failed 😢 Check console");
+    alert("Booking failed 😢 Check backend response in console");
   }
 });
 </script>
