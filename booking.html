@@ -63,9 +63,8 @@ button{
 
 <div id="availability" class="status"></div>
 
-<select id="timeSlot" required>
-<option value="">Select time</option>
-</select>
+<!-- AUTO TIME -->
+<input type="text" id="timeSlot" readonly placeholder="Auto-selected time">
 
 <select id="service" required>
 <option value="">Select Service</option>
@@ -97,75 +96,85 @@ button{
 emailjs.init("aYulFPHFq_V9fhxKe");
 
 const SCRIPT_URL="https://script.google.com/macros/s/AKfycbyDEt-You1wAndEqcSANbfByBC1Tja1LCt5kCYf-B2INOM0Q2xwW_rRIFmeDhbfg5el/exec";
+
+/* 🌸 YOUR WEEKLY SCHEDULE */
+const weeklySchedule = {
+  0: ["14:00 – 15:30"],  // Sunday
+  1: ["17:30 – 19:00"],  // Monday
+  2: [],                 // Tuesday
+  3: [],                 // Wednesday
+  4: ["17:30 – 19:00"],  // Thursday
+  5: [],                 // Friday
+  6: ["17:30 – 19:00"]   // Saturday
+};
+
 const datePicker=document.getElementById("datePicker");
 const timeSlot=document.getElementById("timeSlot");
 const availability=document.getElementById("availability");
 
-/* LOAD AVAILABLE SLOTS */
-async function loadSlots(date){
+/* 🔥 AUTO TIME SELECT */
+function setTime(dateStr){
 
-  const res = await fetch(SCRIPT_URL + "?date=" + date);
-  const data = await res.json();
+  const date = new Date(dateStr);
+  const day = date.getDay();
 
-  timeSlot.innerHTML = `<option value="">Select time</option>`;
+  const slots = weeklySchedule[day];
 
-  if(data["14:00"]){
-    timeSlot.innerHTML += `<option value="14:00">14:00 – 15:30</option>`;
+  if(!slots || slots.length === 0){
+    availability.textContent = "No appointments available 😢";
+    timeSlot.value = "";
+    return;
   }
 
-  if(data["17:30"]){
-    timeSlot.innerHTML += `<option value="17:30">17:30 – 19:00</option>`;
-  }
-
-  if(timeSlot.options.length === 1){
-    availability.textContent = "No slots available 😢";
-  } else {
-    availability.textContent = "Choose a time 💖";
-  }
+  timeSlot.value = slots[0];
+  availability.textContent = "Time auto-selected 💖 " + slots[0];
 }
 
+/* when date changes */
 datePicker.addEventListener("change", function(){
-  loadSlots(this.value);
+  setTime(this.value);
 });
 
-/* SUBMIT BOOKING */
+
+/* 🚀 SUBMIT BOOKING */
 document.getElementById("bookingForm").addEventListener("submit", async function(e){
 
   e.preventDefault();
 
-  const name=document.getElementById("name").value.trim();
-  const email=document.getElementById("email").value.trim();
-  const date=document.getElementById("datePicker").value;
-  const time=document.getElementById("timeSlot").value;
-  const service=document.getElementById("service").value;
-  const notes=document.getElementById("notes").value.trim();
-  const agreed=document.getElementById("agreeRules").checked;
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const date = document.getElementById("datePicker").value;
+  const time = timeSlot.value;
+  const service = document.getElementById("service").value;
+  const notes = document.getElementById("notes").value.trim();
+  const agreed = document.getElementById("agreeRules").checked;
 
   if(!name || !email || !date || !time || !service || !notes || !agreed){
     alert("Complete all fields 🌸");
     return;
   }
 
-  const data=new URLSearchParams();
-  data.append("name",name);
-  data.append("email",email);
-  data.append("date",date);
-  data.append("time",time);
-  data.append("service",service);
-  data.append("notes",notes);
+  const data = new URLSearchParams();
+  data.append("name", name);
+  data.append("email", email);
+  data.append("date", date);
+  data.append("time", time);
+  data.append("service", service);
+  data.append("notes", notes);
 
   try{
 
-    const response = await fetch(SCRIPT_URL,{
-      method:"POST",
-      body:data
+    const res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      body: data
     });
 
-    const text = await response.text();
+    const text = await res.text();
 
+    /* 🔒 DOUBLE BOOKING CHECK */
     if(text === "TAKEN"){
-      alert("❌ This slot was just booked by someone else!");
-      loadSlots(date);
+      alert("❌ Slot already booked! Choose another date.");
+      setTime(date);
       return;
     }
 
@@ -173,6 +182,7 @@ document.getElementById("bookingForm").addEventListener("submit", async function
       throw new Error(text);
     }
 
+    /* 📧 EMAIL CONFIRMATION */
     await emailjs.send(
       "service_h4xpaqh",
       "template_tgosttk",
@@ -182,12 +192,12 @@ document.getElementById("bookingForm").addEventListener("submit", async function
     alert("Booking confirmed! 🌸💌");
 
     document.getElementById("bookingForm").reset();
-    availability.textContent="";
-    timeSlot.innerHTML="<option value=''>Select time</option>";
+    availability.textContent = "";
+    timeSlot.value = "";
 
-  }catch(error){
-    console.error(error);
-    alert("Booking failed 😢 (check console)");
+  }catch(err){
+    console.error(err);
+    alert("Booking failed 😢");
   }
 
 });
