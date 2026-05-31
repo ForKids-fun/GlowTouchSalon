@@ -243,15 +243,16 @@ document
     timeSlot.value="";
 
   }
-  catch(error){
+catch(error){
 
-    console.error(error);
+  console.error(error);
 
-    alert(
-      "Booking failed 😢"
-    );
+  alert(
+    "Booking failed 😢\n\n" + error
+  );
 
-  }
+}
+
 
 });
 </script>
