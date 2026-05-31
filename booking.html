@@ -40,6 +40,11 @@ button{
   cursor:pointer;
 }
 
+button:disabled{
+  opacity:0.6;
+  cursor:not-allowed;
+}
+
 .status{
   font-weight:bold;
   margin:10px;
@@ -63,7 +68,6 @@ button{
 
 <div id="availability" class="status"></div>
 
-<!-- AUTO TIME -->
 <input type="text" id="timeSlot" readonly placeholder="Auto-selected time">
 
 <select id="service" required>
@@ -84,7 +88,7 @@ button{
 <input type="checkbox" id="agreeRules"> I agree to booking rules 💖
 </label>
 
-<button type="submit">Book Appointment 💌</button>
+<button id="submitBtn" type="submit">Book Appointment 💌</button>
 
 </form>
 </div>
@@ -97,22 +101,43 @@ emailjs.init("aYulFPHFq_V9fhxKe");
 
 const SCRIPT_URL="https://script.google.com/macros/s/AKfycbyDEt-You1wAndEqcSANbfByBC1Tja1LCt5kCYf-B2INOM0Q2xwW_rRIFmeDhbfg5el/exec";
 
-/* 🌸 YOUR WEEKLY SCHEDULE */
+/* 🌸 SCHEDULE */
 const weeklySchedule = {
-  0: ["14:00 – 15:30"],  // Sunday
-  1: ["17:30 – 19:00"],  // Monday
-  2: [],                 // Tuesday
-  3: [],                 // Wednesday
-  4: ["17:30 – 19:00"],  // Thursday
-  5: [],                 // Friday
-  6: ["17:30 – 19:00"]   // Saturday
+  0: ["14:00 – 15:30"],
+  1: ["17:30 – 19:00"],
+  2: [],
+  3: [],
+  4: ["17:30 – 19:00"],
+  5: [],
+  6: ["17:30 – 19:00"]
 };
 
 const datePicker=document.getElementById("datePicker");
 const timeSlot=document.getElementById("timeSlot");
 const availability=document.getElementById("availability");
+const submitBtn=document.getElementById("submitBtn");
 
-/* 🔥 AUTO TIME SELECT */
+let isSubmitting = false;
+
+/* ⏱ SAFE FETCH WITH TIMEOUT */
+async function safeFetch(url, options = {}, timeout = 8000){
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+
+  try{
+    const res = await fetch(url, {
+      ...options,
+      signal: controller.signal
+    });
+    clearTimeout(id);
+    return res;
+  }catch(err){
+    clearTimeout(id);
+    throw err;
+  }
+}
+
+/* 🔥 AUTO TIME */
 function setTime(dateStr){
 
   const date = new Date(dateStr);
@@ -123,23 +148,28 @@ function setTime(dateStr){
   if(!slots || slots.length === 0){
     availability.textContent = "No appointments available 😢";
     timeSlot.value = "";
-    return;
+    return false;
   }
 
   timeSlot.value = slots[0];
   availability.textContent = "Time auto-selected 💖 " + slots[0];
+  return true;
 }
 
-/* when date changes */
 datePicker.addEventListener("change", function(){
   setTime(this.value);
 });
 
 
-/* 🚀 SUBMIT BOOKING */
+/* 🚀 SUBMIT */
 document.getElementById("bookingForm").addEventListener("submit", async function(e){
 
   e.preventDefault();
+
+  if(isSubmitting){
+    alert("Already submitting... wait 💖");
+    return;
+  }
 
   const name = document.getElementById("name").value.trim();
   const email = document.getElementById("email").value.trim();
@@ -154,35 +184,46 @@ document.getElementById("bookingForm").addEventListener("submit", async function
     return;
   }
 
-  const data = new URLSearchParams();
-  data.append("name", name);
-  data.append("email", email);
-  data.append("date", date);
-  data.append("time", time);
-  data.append("service", service);
-  data.append("notes", notes);
+  isSubmitting = true;
+  submitBtn.disabled = true;
 
   try{
 
-    const res = await fetch(SCRIPT_URL, {
+    const data = new URLSearchParams();
+    data.append("name", name);
+    data.append("email", email);
+    data.append("date", date);
+    data.append("time", time);
+    data.append("service", service);
+    data.append("notes", notes);
+
+    const res = await safeFetch(SCRIPT_URL, {
       method: "POST",
       body: data
     });
 
+    if(!res){
+      throw new Error("No response from server");
+    }
+
     const text = await res.text();
 
-    /* 🔒 DOUBLE BOOKING CHECK */
-    if(text === "TAKEN"){
-      alert("❌ Slot already booked! Choose another date.");
+    if(!text){
+      throw new Error("Empty server response");
+    }
+
+    /* 🔒 DOUBLE BOOKING */
+    if(text.trim() === "TAKEN"){
+      alert("❌ Slot already booked!");
       setTime(date);
       return;
     }
 
-    if(text !== "OK"){
+    if(text.trim() !== "OK"){
       throw new Error(text);
     }
 
-    /* 📧 EMAIL CONFIRMATION */
+    /* 📧 EMAIL */
     await emailjs.send(
       "service_h4xpaqh",
       "template_tgosttk",
@@ -196,8 +237,12 @@ document.getElementById("bookingForm").addEventListener("submit", async function
     timeSlot.value = "";
 
   }catch(err){
-    console.error(err);
-    alert("Booking failed 😢");
+    console.error("BOOKING ERROR:", err);
+    alert("Booking failed 😢 Try again or check server");
+
+  }finally{
+    isSubmitting = false;
+    submitBtn.disabled = false;
   }
 
 });
