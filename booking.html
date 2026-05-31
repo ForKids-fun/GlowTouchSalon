@@ -11,6 +11,7 @@ body{
   text-align:center;
   padding:40px;
 }
+
 .container{
   background:white;
   padding:30px;
@@ -19,6 +20,7 @@ body{
   border-radius:20px;
   box-shadow:0 0 20px rgba(0,0,0,0.1);
 }
+
 input,select,textarea{
   width:100%;
   padding:12px;
@@ -26,6 +28,7 @@ input,select,textarea{
   border-radius:10px;
   border:1px solid #ccc;
 }
+
 button{
   background:#ff66a3;
   color:white;
@@ -36,6 +39,7 @@ button{
   font-size:18px;
   cursor:pointer;
 }
+
 .status{
   font-weight:bold;
   margin:10px;
@@ -59,7 +63,7 @@ button{
 
 <div id="availability" class="status"></div>
 
-<input type="text" id="timeSlot" readonly placeholder="Auto time">
+<input type="text" id="timeSlot" readonly placeholder="Auto-selected time">
 
 <select id="service" required>
 <option value="">Select Service</option>
@@ -80,13 +84,15 @@ button{
 </label>
 
 <button type="submit">Book Appointment 💌</button>
+
 </form>
 </div>
 
 <script>
-const SCRIPT_URL = "YOUR_NEW_EXEC_LINK";
+/* 🌐 YOUR BACKEND */
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwrgh8A_DxwCb5bVL8_Snsvk4ZAwjpidaj6Mq6i39cHfF8j1HRvmEwSMa61DtJxGlve/exec";
 
-/* WEEKLY SCHEDULE */
+/* 🗓️ WEEKLY SCHEDULE */
 const schedule = {
   0:["14:00 – 15:30"],
   1:["17:30 – 19:00"],
@@ -101,7 +107,7 @@ const datePicker = document.getElementById("datePicker");
 const timeSlot = document.getElementById("timeSlot");
 const availability = document.getElementById("availability");
 
-/* AUTO TIME */
+/* AUTO TIME SELECT */
 datePicker.addEventListener("change", () => {
   const day = new Date(datePicker.value).getDay();
   const slots = schedule[day];
@@ -115,19 +121,20 @@ datePicker.addEventListener("change", () => {
   }
 });
 
-/* SUBMIT */
+/* SUBMIT BOOKING */
 document.getElementById("bookingForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const name = nameInput.value;
-  const email = emailInput.value;
-  const date = datePicker.value;
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const date = document.getElementById("datePicker").value;
   const time = timeSlot.value;
   const service = document.getElementById("service").value;
-  const notes = document.getElementById("notes").value;
+  const notes = document.getElementById("notes").value.trim();
+  const agreed = document.getElementById("agreeRules").checked;
 
-  if(!name || !email || !date || !time || !service){
-    alert("Fill all fields 💖");
+  if (!name || !email || !date || !time || !service || !agreed) {
+    alert("Please fill all fields 💖");
     return;
   }
 
@@ -146,25 +153,26 @@ document.getElementById("bookingForm").addEventListener("submit", async (e) => {
     });
 
     const text = await res.text();
+    console.log("SERVER:", text);
 
-    if(text === "TAKEN"){
-      alert("Slot already booked 😭");
+    if (text === "TAKEN") {
+      alert("❌ This slot is already booked!");
       return;
     }
 
-    if(text !== "OK"){
+    if (text !== "OK") {
       throw new Error(text);
     }
 
-    alert("Booking successful 💖");
+    alert("Booking successful 💖✨");
 
     e.target.reset();
     availability.textContent = "";
     timeSlot.value = "";
 
-  } catch(err){
+  } catch (err) {
     console.error(err);
-    alert("Booking failed 😢");
+    alert("Booking failed 😢 Check backend");
   }
 });
 </script>
