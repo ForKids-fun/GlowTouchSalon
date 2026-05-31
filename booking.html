@@ -81,6 +81,91 @@ button{
 
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Glow Touch Booking</title>
+
+<style>
+body{
+  font-family: Arial;
+  background:#ffe6f0;
+  text-align:center;
+  padding:40px;
+}
+.container{
+  background:white;
+  padding:30px;
+  max-width:500px;
+  margin:auto;
+  border-radius:20px;
+  box-shadow:0 0 20px rgba(0,0,0,0.1);
+}
+input,select,textarea{
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  border-radius:10px;
+  border:1px solid #ccc;
+}
+button{
+  background:#ff66a3;
+  color:white;
+  border:none;
+  padding:15px;
+  width:100%;
+  border-radius:12px;
+  font-size:18px;
+  cursor:pointer;
+}
+.status{font-weight:bold;margin:10px;color:#ff3399;}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+<h1>🌸 Glow Touch Booking</h1>
+
+<form id="bookingForm">
+
+<input type="text" id="name" placeholder="Your Name" required>
+<input type="email" id="email" placeholder="Your Email" required>
+
+<label>Pick a Date 📅</label>
+<input type="date" id="datePicker" required>
+<div id="availability" class="status"></div>
+
+<input type="text" id="timeSlot" readonly placeholder="Time slot will appear">
+
+<select id="service" required>
+<option value="">Select Service</option>
+<option>Hair Care</option>
+<option>Skincare</option>
+<option>Makeup</option>
+<option>Manicure/Pedicure</option>
+<option>Massage</option>
+<option>Nail Painting</option>
+<option>Hairstyling</option>
+<option>Glow Touch Premium</option>
+</select>
+
+<textarea id="notes" placeholder="Tell us your preferences 💖" required></textarea>
+
+<label>
+<input type="checkbox" id="agreeRules"> I agree to booking rules 💖
+</label>
+
+<button type="submit">Book Appointment 💌</button>
+
+</form>
+</div>
+
+<!-- EMAILJS -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
 <script>
 emailjs.init("aYulFPHFq_V9fhxKe");
 
@@ -100,7 +185,7 @@ const datePicker=document.getElementById("datePicker");
 const timeSlot=document.getElementById("timeSlot");
 const availability=document.getElementById("availability");
 
-/* SHOW TIME */
+/* DATE CHECK */
 datePicker.addEventListener("change",function(){
 
   const selectedDate=new Date(this.value);
@@ -120,7 +205,7 @@ datePicker.addEventListener("change",function(){
     timeSlot.value="";
   }
   else{
-    availability.textContent="Available time: " + slots[0];
+    availability.textContent="Available time: "+slots[0];
     timeSlot.value=slots[0];
   }
 });
@@ -138,7 +223,7 @@ document.getElementById("bookingForm").addEventListener("submit",async function(
   const notes=document.getElementById("notes").value.trim();
   const agreed=document.getElementById("agreeRules").checked;
 
-  if(!name||!email||!date||!time||!service||!notes||!agreed){
+  if(!name || !email || !date || !time || !service || !notes || !agreed){
     alert("Complete all fields 🌸");
     return;
   }
@@ -156,24 +241,20 @@ document.getElementById("bookingForm").addEventListener("submit",async function(
 
     console.log("Sending booking...");
 
+    /* 1. SEND TO GOOGLE SHEETS */
     const response=await fetch(SCRIPT_URL,{
       method:"POST",
       body:data
     });
 
     const text=await response.text();
-    console.log("SERVER RESPONSE:", text);
-
-    if(text==="BOOKED"){
-      alert("That slot is already booked 😢");
-      return;
-    }
+    console.log("SHEETS RESPONSE:", text);
 
     if(text!=="OK"){
       throw new Error(text);
     }
 
-    /* EMAILJS SEND */
+    /* 2. SEND EMAIL */
     await emailjs.send(
       "service_h4xpaqh",
       "template_tgosttk",
@@ -187,7 +268,7 @@ document.getElementById("bookingForm").addEventListener("submit",async function(
       }
     );
 
-    alert("Booking successful! 🌸");
+    alert("Booking confirmed! 🌸💌");
 
     document.getElementById("bookingForm").reset();
     availability.textContent="";
@@ -195,14 +276,16 @@ document.getElementById("bookingForm").addEventListener("submit",async function(
 
   }catch(error){
 
-    console.error("FULL ERROR:", error);
-
+    console.error("ERROR:", error);
     alert("Booking failed 😢 (check console)");
 
   }
 
 });
 </script>
+
+</body>
+</html>
 
 </body>
 </html>
