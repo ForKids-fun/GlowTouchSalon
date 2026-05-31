@@ -244,15 +244,9 @@ document
 
   }
 catch(error){
-
-  console.error(error);
-
-  alert(
-    "Booking failed 😢\n\n" + error
-  );
-
+  console.log("FULL ERROR:", error);
+  alert("Booking failed 😢\nCheck console for details");
 }
-
 
 });
 </script>
