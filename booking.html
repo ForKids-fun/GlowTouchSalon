@@ -138,12 +138,26 @@ document.getElementById("bookingForm").addEventListener("submit", async (e) => {
   }
 
   const data = new URLSearchParams();
-  data.append("name", name);
-  data.append("email", email);
-  data.append("date", date);
-  data.append("time", time);
-  data.append("service", service);
-  data.append("notes", notes);
+data.append("name", name);
+data.append("email", email);
+data.append("date", date);
+data.append("time", time);
+data.append("service", service);
+data.append("notes", notes);
+
+const res = await fetch(SCRIPT_URL, {
+  method: "POST",
+  body: data
+});
+
+const text = await res.text();
+
+console.log("RAW RESPONSE:", text);
+alert("Server says: " + text);
+
+if (text.trim() !== "OK") {
+  throw new Error(text);
+}
 
   try {
 
