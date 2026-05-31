@@ -78,7 +78,7 @@ button{
 </div>
 
 <script>
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbyxv6cQYjwhrjgIrpNLMQKT6ovg3fmKu2aTbk7BowUFBOHvTbuzmrlKPOxZrhHm7042/exec";
+const FORM_URL="https://docs.google.com/forms/d/e/1FAIpQLSe-hNgNhx2yX_oe3QvtEVC8uE9KBfkQheJi4AZS8MYr8mT-SQ/formResponse";
 
 const availableTimes={
 0:["14:00 – 15:30"],
@@ -113,7 +113,7 @@ datePicker.addEventListener("change",function(){
     timeSlot.value="";
   }
   else{
-    availability.textContent="Available time: "+slots[0];
+    availability.textContent="Available time: " + slots[0];
     timeSlot.value=slots[0];
   }
 });
@@ -125,46 +125,41 @@ document.getElementById("bookingForm").addEventListener("submit",async function(
   const name=document.getElementById("name").value.trim();
   const email=document.getElementById("email").value.trim();
   const date=document.getElementById("datePicker").value;
+  const time=timeSlot.value;
   const service=document.getElementById("service").value;
   const notes=document.getElementById("notes").value.trim();
   const agreed=document.getElementById("agreeRules").checked;
 
-  if(!name||!email||!date||!timeSlot.value||!service||!notes||!agreed){
+  if(!name || !email || !date || !time || !service || !notes || !agreed){
     alert("Complete all fields 🌸");
     return;
   }
 
-  /* ✅ FINAL FIXED REQUEST */
-  const data = new URLSearchParams();
-  data.append("name", name);
-  data.append("email", email);
-  data.append("date", date);
-  data.append("time", timeSlot.value);
-  data.append("service", service);
-  data.append("notes", notes);
+  const formData=new FormData();
+
+  formData.append("entry.1515449340",name);
+  formData.append("entry.186587811",email);
+  formData.append("entry.1839552928",date);
+  formData.append("entry.679024891",time);
+  formData.append("entry.1351785158",service);
+  formData.append("entry.287747768",notes);
 
   try{
-    console.log("Sending booking...");
-
-    const response = await fetch(SCRIPT_URL,{
+    await fetch(FORM_URL,{
       method:"POST",
-      body:data
+      mode:"no-cors",
+      body:formData
     });
 
-    const text = await response.text();
-    console.log("Server response:", text);
+    alert("Booking sent successfully! 🌸");
 
-    if(text !== "OK"){
-      throw new Error(text);
-    }
-
-    alert("Booking saved! 🌸");
     document.getElementById("bookingForm").reset();
     availability.textContent="";
+    timeSlot.value="";
 
-  }catch(err){
-    console.error("ERROR:", err);
-    alert("Error sending booking 😢 (check console)");
+  }catch(error){
+    console.error(error);
+    alert("Booking failed 😢");
   }
 });
 </script>
